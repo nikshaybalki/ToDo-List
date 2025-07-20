@@ -189,58 +189,212 @@
 
 
 
+// "use client";
+
+// import React, { useState } from "react";
+// import { useRouter } from "next/navigation";
+// import toast from "react-hot-toast";
+
+// const Page = () => {
+//   const [title, setTitle] = useState("");
+//   const [desc, setDesc] = useState("");
+//   const [mainTask, setMainTask] = useState([]);
+//   const [completedTasks, setCompletedTasks] = useState([]);
+
+//   const router = useRouter();
+
+//   const submitHandler = (e) => {
+//     e.preventDefault();
+//     if (!title.trim() || !desc.trim()) return;
+//     setMainTask([...mainTask, { title, desc }]);
+//     setTitle("");
+//     setDesc("");
+//   };
+
+//   const deleteHandler = (i) => {
+//     const updatedTasks = [...mainTask];
+//     updatedTasks.splice(i, 1);
+//     setMainTask(updatedTasks);
+//   };
+
+//   const completeHandler = (i) => {
+//     const task = mainTask[i];
+//     const remaining = [...mainTask];
+//     remaining.splice(i, 1);
+//     setMainTask(remaining);
+
+//     // Save to localStorage
+//     const existingCompleted = JSON.parse(localStorage.getItem("completed") || "[]");
+//     localStorage.setItem("completed", JSON.stringify([...existingCompleted, task]));
+  
+// toast.success("✅ Saved successfully!", {
+//   icon: "🚀",
+// });
+
+
+//   };
+
+//   return (
+//     <div className="min-h-screen bg-gray-50 text-gray-800 px-6 py-10 font-sans">
+//       <header className="mb-10 flex justify-between items-center">
+//         <div>
+//           <h1 className="text-4xl font-bold text-indigo-600">📝 To-Do List</h1>
+//           <p className="text-gray-500">Track your tasks efficiently.</p>
+//         </div>
+//         <button
+//           onClick={() => router.push("/CompleteTask")}
+//           className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-semibold"
+//         >
+//           ✅ View Completed
+//         </button>
+//       </header>
+
+//       <form
+//         onSubmit={submitHandler}
+//         className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10"
+//       >
+//         <input
+//           type="text"
+//           placeholder="Task Title"
+//           className="w-full sm:w-1/4 px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-400"
+//           value={title}
+//           onChange={(e) => setTitle(e.target.value)}
+//         />
+//         <input
+//           type="text"
+//           placeholder="Description"
+//           className="w-full sm:w-1/3 px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-400"
+//           value={desc}
+//           onChange={(e) => setDesc(e.target.value)}
+//         />
+//         <button
+//           type="submit"
+//           className="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-all"
+//         >
+//           ➕ Add
+//         </button>
+//       </form>
+
+//       <section className="max-w-4xl mx-auto space-y-4">
+//         {mainTask.length === 0 ? (
+//           <p className="text-center text-gray-400 text-lg">
+//             No tasks yet. Add one!
+//           </p>
+//         ) : (
+//           mainTask.map((task, i) => (
+//             <div
+//               key={i}
+//               className="flex items-center justify-between bg-white border rounded-lg shadow-md px-6 py-4"
+//             >
+//               <div>
+//                 <h3 className="text-xl font-bold text-indigo-700">{task.title}</h3>
+//                 <p className="text-gray-600">{task.desc}</p>
+//               </div>
+//               <div className="flex gap-2">
+//                 <button
+//                   onClick={() => completeHandler(i)}
+//                   className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded"
+//                 >
+//                   Complete
+//                 </button>
+//                 <button
+//                   onClick={() => deleteHandler(i)}
+//                   className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+//                 >
+//                   Delete
+//                 </button>
+//               </div>
+//             </div>
+//           ))
+//         )}
+//       </section>
+//     </div>
+//   );
+// };
+
+// export default Page;
+
+
+
+
+
+
+
+
+
+
+
 "use client";
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 const Page = () => {
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
   const [mainTask, setMainTask] = useState([]);
-  const [completedTasks, setCompletedTasks] = useState([]);
 
   const router = useRouter();
 
   const submitHandler = (e) => {
     e.preventDefault();
-    if (!title.trim() || !desc.trim()) return;
+    if (!title.trim() || !desc.trim()) return toast.error("Please enter all fields");
     setMainTask([...mainTask, { title, desc }]);
     setTitle("");
     setDesc("");
+    toast.success("Task added");
   };
 
   const deleteHandler = (i) => {
-    const updatedTasks = [...mainTask];
-    updatedTasks.splice(i, 1);
-    setMainTask(updatedTasks);
+    const task = mainTask[i];
+    const updated = [...mainTask];
+    updated.splice(i, 1);
+    setMainTask(updated);
+
+    const existing = JSON.parse(localStorage.getItem("deleted") || "[]");
+    localStorage.setItem("deleted", JSON.stringify([...existing, task]));
+    toast.error("🗑️ Task deleted");
   };
 
   const completeHandler = (i) => {
     const task = mainTask[i];
-    const remaining = [...mainTask];
-    remaining.splice(i, 1);
-    setMainTask(remaining);
+    const updated = [...mainTask];
+    updated.splice(i, 1);
+    setMainTask(updated);
 
-    // Save to localStorage
-    const existingCompleted = JSON.parse(localStorage.getItem("completed") || "[]");
-    localStorage.setItem("completed", JSON.stringify([...existingCompleted, task]));
-    alert("Task marked as completed!");
+    const existing = JSON.parse(localStorage.getItem("completed") || "[]");
+    localStorage.setItem("completed", JSON.stringify([...existing, task]));
+    toast.success("✅ Task completed!");
   };
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-800 px-6 py-10 font-sans">
-      <header className="mb-10 flex justify-between items-center">
+      <header className="mb-10 flex flex-col sm:flex-row justify-between items-center">
         <div>
           <h1 className="text-4xl font-bold text-indigo-600">📝 To-Do List</h1>
-          <p className="text-gray-500">Track your tasks efficiently.</p>
+          <p className="text-gray-500">Organize. Complete. Remove.</p>
         </div>
-        <button
-          onClick={() => router.push("/CompleteTask")}
-          className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-semibold"
-        >
-          ✅ View Completed
-        </button>
+        <div className="flex gap-3 mt-4 sm:mt-0">
+          <button
+            onClick={() => router.push("/CompleteTask")}
+            className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg"
+          >
+            ✅ Completed Tasks
+          </button>
+          <button
+            onClick={() => router.push("/DeleteTask")}
+            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
+          >
+            🗑️ Deleted Tasks
+          </button>
+          <button
+  onClick={() => router.push("/TaskAnalysis")}
+  className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded-lg"
+>
+  📊 Task Analysis
+</button>
+        </div>
       </header>
 
       <form
@@ -250,22 +404,22 @@ const Page = () => {
         <input
           type="text"
           placeholder="Task Title"
-          className="w-full sm:w-1/4 px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-400"
+          className="w-full sm:w-1/4 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
         <input
           type="text"
           placeholder="Description"
-          className="w-full sm:w-1/3 px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-indigo-400"
+          className="w-full sm:w-1/3 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-400"
           value={desc}
           onChange={(e) => setDesc(e.target.value)}
         />
         <button
           type="submit"
-          className="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-all"
+          className="bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700"
         >
-          ➕ Add
+          ➕ Add Task
         </button>
       </form>
 
@@ -295,7 +449,7 @@ const Page = () => {
                   onClick={() => deleteHandler(i)}
                   className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
                 >
-                  Delete
+                 Delete
                 </button>
               </div>
             </div>
